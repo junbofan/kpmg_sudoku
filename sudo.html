@@ -1,0 +1,908 @@
+<style type="text/css">
+	body, body * {
+		margin: 0;
+		padding: 0;
+
+  -webkit-user-select: none;
+     -moz-user-select: -moz-none;
+      -ms-user-select: none;
+          user-select: none;
+ 
+	}
+
+	.sudo {
+		width: 800px;
+		overflow: hidden;
+		margin: 0 auto;
+		border: 1px solid #eee;
+		font-family: "Helvetica", sans-serif;
+	}
+
+	.board {
+		overflow: hidden;
+		padding: 10px;
+		margin: 0 auto;
+		display: none;
+	}
+
+	.container {
+		width: 90%;
+		overflow: hidden;
+		border: 1px solid #3498db;
+		border-radius: 3px;
+		margin: 0 auto;
+		padding: 20px 0;
+	}
+
+	.board.show {
+		display: block;
+	}
+
+	.board.board-width-4 {
+		width: 380px;
+
+	}
+
+	.board.board-width-5 {
+		width: 470px;
+	}
+
+	.board.board-width-6 {
+		width: 570px;
+	}
+
+	.board.board-width-7 {
+		width: 670px;
+	}
+
+	.operation {
+		width: 90%;
+		margin: 0 auto;
+		margin-top: 20px;
+		border: 1px solid #3498db;
+		overflow: hidden;
+		padding: 10px 0;
+	}
+
+	.operation-display {
+		width: 50%;
+		float: left;
+		overflow: hidden;
+		padding: 10px;
+	}
+
+	.operation-btns {
+		width: 40%;
+		float: right;
+		overflow: hidden;
+	}
+
+
+
+
+	.point {
+		cursor: pointer;
+		height: 60px;
+		width: 60px;
+		border: 2px solid #333;
+		border-radius: 50%;
+		float: left;
+		margin: 15px;
+		background-color: white;
+		text-align: center;
+	}
+
+	.point.isTarget {
+		border-color: #c0392b;
+	}
+
+	.sudo-btn, .box-select-btn{
+		width: 70px;
+		height: 28px;
+		text-align: center;
+		font-size: 15px;
+		line-height: 28px;
+		border: 2px solid #3498db;
+		cursor: pointer;
+		border-radius: 2px;
+		color: #3498db;
+		letter-spacing: 1px;
+		font-size: bold;
+	}
+
+	.sudo-btn:hover {
+		background-color: #3498db;
+		color: #fff;
+	}
+
+
+
+	.board-size {
+		width: 50px;
+		height: 30px;
+		background-color: white;
+	}
+
+	.radio-btn {
+		width: 25px;
+		height: 25px;
+		border-radius: 50px;
+		border: 2px solid #3498db;
+		cursor: pointer;
+		font-size: 14px;
+		text-align: center;
+		line-height: 25px;
+		color:#3498db; 
+	}
+
+	.radio-btn.select {
+		background-color: #3498db;
+		color: white;
+	}
+
+	.board-sudosize {
+		width: 100%;
+		overflow: hidden;
+	}
+	.board-sudosize .radio-btn {
+		float: left;
+		margin: 0 5px;
+	}
+
+	.point img {
+		width: 30px;
+		height: 30px;
+		margin-top: 14px;
+		display: inline-block;
+	}
+
+	.bottom-btns {
+		text-align: center;
+		padding: 10px 0;
+	}
+
+	.board-sudosize {
+		text-align: center;
+		padding: 10px 0;
+	}
+
+	.bottom-btns .sudo-btn {
+		display: inline-block;
+		margin: 0 10px;
+	}
+
+	.board-sudosize .radio-btn {
+		display: inline-block;
+		float: none;
+	}
+
+	.operation p {
+		font-size: 18px;
+		padding-bottom: 10px;
+		display: block;
+		margin: 0;
+		font-weight: bold;
+		text-align: center;
+	}
+
+	.box-select-btn.on{
+		background-color: #3498db;
+		color: #fff;
+	}
+
+	.board-targetcontrol {
+		text-align: center;
+		overflow: hidden;
+	} 
+
+	.board-targetcontrol .box-select-btn {
+		display: inline-block;
+		margin: 0 10px;
+	}
+
+	.icon-display-unit {
+		float: left;
+		overflow: hidden;
+		width: 80px;
+		margin: 10px 20px;
+	}
+
+	.icon-display-unit img {
+		width: 30px;
+		height: 30px;
+		display: block;
+		float: left;
+	}
+
+	.icon-display-unit p {
+		display: block;
+		float: right;
+		height: 30px;
+		width: 30px;
+		line-height: 30px;
+		font-size: 28px;
+		font-weight: bold;
+		color: #444;
+	}
+
+	.mouseover-board {
+		width: 30px;
+		height: 30px;
+		background-color: #fff;
+		border: 3px solid #3498db;
+		border-radius: 4px;
+		text-align: center;
+		line-height: 30px;
+		font-size: 30px;
+		font-weight: bold;
+		z-index: 100;
+		position: absolute;
+		left: 0;
+		top: 0;
+		display: none;
+		color: #3498db;
+	}
+
+
+
+</style>
+
+
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<div class="sudo">
+	<div class="title">
+	</div>
+
+	<div class="container">
+		<div class="mouseover-board"></div>
+
+		<div class="board board-width-4 show" data-value="4">
+			<div class="point" id="sudo4-3-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-3-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-3-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-3-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo4-2-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-2-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-2-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-2-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo4-1-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-1-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-1-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-1-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo4-0-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-0-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-0-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo4-0-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+		</div>
+
+
+		<div class="board board-width-5" data-value="5">
+			<div class="point" id="sudo5-4-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-4-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-4-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-4-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-4-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo5-3-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-3-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-3-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-3-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-3-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo5-2-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-2-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-2-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-2-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-2-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo5-1-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-1-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-1-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-1-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-1-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo5-0-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-0-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-0-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-0-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo5-0-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+		</div>
+
+		<div class="board board-width-6" data-value="6">
+			<div class="point" id="sudo6-5-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-5-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-5-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-5-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-5-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-5-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo6-4-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-4-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-4-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-4-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-4-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-4-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo6-3-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-3-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-3-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-3-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-3-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-3-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo6-2-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-2-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-2-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-2-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-2-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-2-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo6-1-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-1-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-1-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-1-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-1-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-1-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo6-0-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-0-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-0-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-0-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-0-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo6-0-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+		</div>
+
+		<div class="board board-width-7" data-value="7">
+			<div class="point" id="sudo7-6-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-6-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-6-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-6-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-6-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-6-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-6-6" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo7-5-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-5-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-5-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-5-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-5-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-5-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-5-6" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo7-4-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-4-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-4-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-4-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-4-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-4-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-4-6" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo7-3-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-3-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-3-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-3-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-3-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-3-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-3-6" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo7-2-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-2-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-2-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-2-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-2-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-2-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-2-6" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo7-1-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-1-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-1-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-1-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-1-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-1-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-1-6" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+			<div class="point" id="sudo7-0-0" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-0-1" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-0-2" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-0-3" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-0-4" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-0-5" data-value="0"><img src="./icons/icon-0.jpg"></div>
+			<div class="point" id="sudo7-0-6" data-value="0"><img src="./icons/icon-0.jpg"></div>
+
+		</div>
+	</div>
+	<div class="operation">
+		<div class="operation-display">
+			<div class="icon-display-unit">
+				<img src="./icons/icon-1.jpg" />
+				<p>1</p>
+			</div>
+			<div class="icon-display-unit">
+				<img src="./icons/icon-2.jpg" />
+				<p>2</p>
+			</div>
+			<div class="icon-display-unit">
+				<img src="./icons/icon-3.jpg" />
+				<p>3</p>
+			</div>
+			<div class="icon-display-unit">
+				<img src="./icons/icon-4.jpg" />
+				<p>4</p>
+			</div>
+			<div class="icon-display-unit">
+				<img src="./icons/icon-5.jpg" />
+				<p>5</p>
+			</div>
+			<div class="icon-display-unit">
+				<img src="./icons/icon-6.jpg" />
+				<p>6</p>
+			</div>
+			<div class="icon-display-unit">
+				<img src="./icons/icon-7.jpg" />
+				<p>7</p>
+			</div>
+
+		</div>
+		<div class="operation-btns">
+			<div class="board-sudosize">
+				<p>Board Size</p>
+				<div class="radio-btn select" id="sudo-radio-size-4" data-value="4">4</div>
+				<div class="radio-btn" id="sudo-radio-size-5" data-value="5">5</div>
+				<div class="radio-btn" id="sudo-radio-size-6" data-value="6">6</div>
+				<div class="radio-btn" id="sudo-radio-size-7" data-value="7">7</div>
+			</div>
+			<div class="board-targetcontrol" data-value="input">
+				<p>Select Mode</p>
+				<div class="box-select-btn input on" data-value="input">INPUT</div>
+				<div class="box-select-btn target" data-value="target">TARGET</div>
+			</div>
+			<div class="bottom-btns">
+				<p>Operations</p>
+				<div class="sudo-btn run">RUN</div>
+				<div class="sudo-btn clear">CLEAR</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+</body>
+<script type="text/javascript" src="./js/jquery-3.2.1.js"></script>
+<script type="text/javascript">
+	$('.point').click(function () {
+		selectMode = $('.board-targetcontrol').attr('data-value');
+		if (selectMode == 'input') {
+			value = parseInt($(this).attr('data-value'))
+			maxVal = parseInt($(this).parent('.board').attr('data-value'))
+			value = value + 1
+			if (value > maxVal) {
+				value = 0;
+			}
+			$(this).attr('data-value', value)
+			$(this).find('img').attr('src', './icons/icon-' + value + '.jpg')
+		} else {
+			if ($(this).hasClass('isTarget')) {
+				$(this).removeClass('isTarget');
+			} else {
+				$(this).addClass('isTarget');
+			}
+			$(this).siblings().removeClass('isTarget');
+		}
+
+		var number = $(this).attr('data-value');
+		$('.mouseover-board').html(number);
+	})
+
+	$('.radio-btn').click(function () {
+		if (!$(this).hasClass('select')) {
+			$(this).siblings().removeClass('select');
+			$(this).addClass('select');
+
+			value = $(this).attr('data-value');
+			boardName = '.board-width-' + value;
+			$(boardName).addClass('show').siblings().removeClass('show');
+
+		}
+	})
+
+	$('.box-select-btn').click(function () {
+		if (!$(this).hasClass('on')) {
+			$(this).siblings().removeClass('on');
+			$(this).addClass('on');
+			value = $(this).attr('data-value');
+			$(this).parent('.board-targetcontrol').attr('data-value', value);
+		}
+	})
+
+	$('.sudo-btn.clear').click(function(){
+		var board = $('.board.show');
+		board.find('.point').attr('data-value' ,'0').removeClass('isTarget');
+		board.find('img').attr('src', './icons/icon-0.jpg');
+	})
+
+	$('.point').mousemove(function(){
+		var x = $(this).offset().left || 0; 
+		var y = $(this).offset().top || 0; 
+		x += 60;
+		y -= 30;
+		var number = $(this).attr('data-value');
+		$('.mouseover-board').css('left', x + 'px')
+							 .css('top', y + 'px')
+							 .css('display', 'block')
+							 .html(number);
+
+
+	});
+
+	$('.point').mouseleave(function(){
+		$('.mouseover-board').css('display', 'none');
+	});
+</script>
+
+<script type="text/javascript">
+function Sudo(width) {
+	this.width = width;
+	this.board = this.initSudoBoard();
+	this.possible = this.initPossibleBoard();
+
+}
+
+
+Sudo.prototype.initPossibleBoard = function() {
+	var result = []
+	for (var i = 0; i != this.width; ++i ) {
+		var outerTemp = [];
+		for (var j = 0; j != this.width; ++j) {
+			var innerTemp = [];
+			for (var k = 1; k != this.width + 1; ++k) {
+				innerTemp.push(k);
+			}
+			outerTemp.push(innerTemp);
+		}
+		result.push(outerTemp);
+	}
+	return result;
+};
+
+Sudo.prototype.initSudoBoard = function() {
+	var result = [];
+	for (var i = 0; i != this.width; ++i) {
+		var temp = [];
+		for (var j = 0; j != this.width; ++j) {
+			temp.push(0);
+		}
+		result.push(temp);
+	}
+	return result;
+}
+
+Sudo.prototype.getComplementSet = function(decidedValues) {
+	var fullSet = [];
+	for (var i = 1; i != this.width + 1; ++i) {
+		fullSet.push(i);
+	}
+	var result = [];
+	for (var i = 0; i != fullSet.length; ++i) {
+		if (decidedValues.indexOf(fullSet[i]) == -1) {
+			result.push(fullSet[i]);
+		}
+	}
+	return result;
+}
+
+Sudo.prototype.getUnionSet = function(firstSet, secondSet) {
+	var result = [];
+	for (var i = 0; i != secondSet.length; ++i) {
+		if (firstSet.indexOf(secondSet[i]) != -1) {
+			result.push(secondSet[i]);
+		}
+	}
+	return result;
+}
+
+
+Sudo.prototype.updateUndefinedPositionOfEachRow = function(row) {
+	var decidedValues = [];
+	for (var col = 0; col != this.width; ++col) {
+		if (this.board[row][col] != 0) {
+			decidedValues.push(this.board[row][col]);
+		}
+	}
+	var possibleValues = this.getComplementSet(decidedValues);
+	//console.log(possibleValues);
+	for(var col = 0; col != this.width; ++col) {
+		if (this.board[row][col] > 0) {
+			continue;
+		}
+		var updatedSet = this.getUnionSet(possibleValues, this.possible[row][col]);
+		this.possible[row][col] = updatedSet;
+	}
+}
+
+Sudo.prototype.updateUndefinedPositionOfEachColumn = function(col) {
+	var decidedValues = [];
+	for (var row = 0; row != this.width; ++row) {
+		if (this.board[row][col] != 0) {
+			decidedValues.push(this.board[row][col]);
+		}
+	}
+	var possibleValues = this.getComplementSet(decidedValues);
+	for(var row = 0; row != this.width; ++row) {
+		if (this.board[row][col] > 0) {
+			continue;
+		}
+		var updatedSet = this.getUnionSet(possibleValues, this.possible[row][col]);
+		this.possible[row][col] = updatedSet;
+	}
+}
+
+Sudo.prototype.removeValueFromPossibleBoard = function(row, col, value) {
+	if (this.possible[row][col].indexOf(value) != -1) {
+		var index = this.possible[row][col].indexOf(value);
+		this.possible[row][col].splice(index, 1);
+	}
+}
+
+Sudo.prototype.decideOnePosition = function(row, col) {
+	if (this.possible[row][col].length != 1) {
+		return;
+	}
+	this.board[row][col] = this.possible[row][col][0];
+	this.possible[row][col] = [];
+	for (var j = 0; j != this.width; ++j) {
+		this.removeValueFromPossibleBoard(row, j, this.board[row][col]);
+		this.removeValueFromPossibleBoard(j, col, this.board[row][col]);
+	}
+	for (var j = 0; j != this.width; ++j) {
+		if (this.possible[row][j].length == 1) {
+			this.decideOnePosition(row, j);
+		}
+		if (this.possible[j][col].length == 1) {
+			this.decideOnePosition(j, col);
+		}
+	}
+}
+
+Sudo.prototype.decidedUnqiuePossibleValueOfRow = function(row) {
+	var currentValues = [];
+	for (var i = 0; i != this.width; ++i) {
+		if (this.board[row][i] > 0) {
+			currentValues.push(this.board[row][i]);
+		}
+	}
+	var possibleValues = this.getComplementSet(currentValues);
+	for (var i = 0; i != possibleValues.length; ++i) {
+		var key = possibleValues[i];
+		var count = 0;
+		for (var j = 0; j != this.width; ++j) {
+			if (this.possible[row][j].indexOf(key) != -1) {
+				++count;
+			}
+		}
+		if (count > 1) {
+			continue;
+		}
+		for (var j = 0; j != this.width; ++j) {
+			if (this.possible[row][j].indexOf(key) != -1) {
+				this.possible[row][j] = [key];
+				this.decideOnePosition(row, j);
+			}
+		}
+	}
+}
+
+
+Sudo.prototype.decidedUnqiuePossibleValueOfColumn = function(col) {
+	var currentValues = [];
+	for (var i = 0; i != this.width; ++i) {
+		if (this.board[i][col] > 0) {
+			currentValues.push(this.board[i][col]);
+		}
+	}
+	var possibleValues = this.getComplementSet(currentValues);
+	for (var i = 0; i != possibleValues.length; ++i) {
+		var key = possibleValues[i];
+		var count = 0;
+		for (var j = 0; j != this.width; ++j) {
+			if (this.possible[j][col].indexOf(key) != -1) {
+				++count;
+			}
+		}
+		if (count > 1) {
+			continue;
+		}
+		for (var j = 0; j != this.width; ++j) {
+			if (this.possible[j][col].indexOf(key) != -1) {
+				this.possible[j][col] = [key];
+				this.decideOnePosition(j, col);
+			}
+		}
+	}
+}
+
+
+Sudo.prototype.setTarget = function(row, col) {
+	this.row = row;
+	this.col = col;
+}
+
+Sudo.prototype.maxIteration = function(iteration) {
+	this.maxIteration = iteration;
+}
+
+Sudo.prototype.run = function() {
+	var iter = 0;
+	var lastRun = false;
+	while(true) {
+		for (var row = 0; row != this.width; ++row) {
+			this.updateUndefinedPositionOfEachRow(row);
+		}
+		for (var col = 0; col != this.width; ++col) {
+			this.updateUndefinedPositionOfEachColumn(col);
+		}
+
+		for (var row = 0; row != this.width; ++row) {
+			for (var col = 0; col != this.width; ++col) {
+				this.decideOnePosition(row, col);
+			}
+		}
+
+		for (var row = 0; row != this.width; ++row) {
+			this.decidedUnqiuePossibleValueOfRow(row);
+		}
+
+		for (var col = 0; col != this.width; ++col) {
+			this.decidedUnqiuePossibleValueOfColumn(col);
+		}
+
+		++iter;
+		if (lastRun) {
+			break;
+		}
+		if ( (this.row && this.col && this.board[this.row][this.col] > 0) || iter > this.maxIteration) {
+			lastRun = true;
+		} 
+	}
+}
+
+Sudo.prototype.printBoard = function() {
+	console.log(this.board);
+	//console.log(this.possible);
+}
+
+Sudo.prototype.set = function(row, col, value) {
+	this.board[row][col] = value;
+}
+
+Sudo.prototype.isValidRow = function (row) {
+	var current = [];
+	for (var col = 0; col != this.width; ++col) {
+		if (current.indexOf(this.board[row][col]) != -1) {
+			return false;
+		} else {
+			if ( this.board[row][col] != 0 ) {
+				current.push(current);
+			}
+		}
+	}
+	return true;
+}
+
+Sudo.prototype.isValidColumn = function (col) {
+	var current = [];
+	for (var row = 0; row != this.width; ++row) {
+		if (current.indexOf(this.board[row][col]) != -1) {
+			return false;
+		} else {
+			if ( this.board[row][col] != 0 ) {
+				current.push(current);
+			}
+		}
+	}
+	return true;
+}
+
+Sudo.prototype.isValid = function() {
+	for (var i = 0; i != this.width; ++i) {
+		if ( (!this.isValidRow(i)) || (!this.isValidColumn(i)) ) {
+			return false;
+		}
+		return true;
+	}
+}
+
+Sudo.prototype.cleanDisplayBoard = function() {
+	var boardId = this.width;
+	var board = $('.board-width-' + boardId);
+	board.find('.point').attr('data-value', '0');
+	board.find('img').attr('src', './icons/icon-0.jpg');
+}
+
+Sudo.prototype.display = function() {
+	this.cleanDisplayBoard();
+	for (var row = 0; row != this.width; ++row) {
+		for (var col = 0; col != this.width; ++col) {
+			var target = $('#sudo' + this.width + '-' + row + '-'  + col);
+			target.attr('data-value', this.board[row][col]);
+			target.find('img').attr('src', './icons/icon-' + this.board[row][col] + '.jpg');
+		}
+	}
+}
+
+
+function getBoardInfo() {
+	var res = {
+		'set': [],
+		'target': null
+	};
+	var board = $('.board.show');
+	if (board.find('.point.isTarget').length > 0) {
+		var targetId = board.find('.point.isTarget').attr('id');
+		var target = [parseInt(targetId.split('-')[1]), parseInt(targetId.split('-')[2])];
+		res.target = target;
+	} else {
+		res.target = null;
+	}
+	board.find('.point').each(function(){
+		if (parseInt($(this).attr('data-value')) > 0) {
+			var id = $(this).attr('id');
+			var point = [parseInt(id.split('-')[1]), parseInt(id.split('-')[2]), parseInt($(this).attr('data-value'))];
+			res['set'].push(point);
+		}
+	});
+
+	return res;
+}
+
+Sudo.prototype.setAll = function(set) {
+	for (var i = 0; i != set.length; ++i) {
+		var point = set[i];
+		this.set(point[0], point[1], point[2]);
+	}
+}
+
+
+// sudo = new Sudo(4);
+// sudo.maxIteration(10);
+
+// sudo.setTarget(2,1)
+// sudo.set(0,0, 3)
+// sudo.set(1,0, 2)
+// sudo.set(1,3, 4)
+// sudo.set(2,2, 3)
+// sudo.set(2,3, 2)
+// sudo.set(3,0, 1)
+
+// sudo.run();
+// sudo.printBoard();
+// sudo.display();
+// console.log(sudo.isValid());
+
+
+$('.sudo-btn.run').click(function(){
+	var info = getBoardInfo();
+	var width = parseInt($('.board.show').attr('data-value'));
+	var sudo = new Sudo(width);
+	if (info['target']) {
+		sudo.setTarget(info['target'][0], info['target'][1]);
+	}
+	sudo.maxIteration(30);
+	sudo.setAll(info['set']);
+
+	sudo.run();
+	sudo.printBoard();
+	sudo.display();
+});
+
+
+</script>
+</html>
